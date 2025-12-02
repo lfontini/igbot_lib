@@ -1,15 +1,29 @@
-from configs.settings import settings
 from devices.factory import DeviceFactory
-from enums.device_type import DeviceType
+from devices.enums.vendor import Vendor
+from devices.enums.mikrotik_driver import MikrotikDriver
+from infra.configs.settings import settings   
 
-
-device = DeviceFactory.create(
-    DeviceType.MIKROTIK,
+mt = DeviceFactory.create(
+    vendor=Vendor.MIKROTIK,
+    driver=MikrotikDriver.NETMIKO,
     ip="172.20.39.4",
     username=settings.MIKROTIK_USERNAME_POP,
     password=settings.MIKROTIK_PASSWORD_POP,
-    port=settings.DEFAULT_PORT
 )
 
-conn = device.connect()
-print(conn.send_command("/system identity print"))
+
+mt.connect()
+#print(mt.run("/system/resource/print"))
+print(mt.get_system())
+
+
+
+mt.close()
+
+
+
+
+
+
+
+
