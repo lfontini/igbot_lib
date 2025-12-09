@@ -18,8 +18,6 @@ cs.connect()
 #print(mt.run("/ip firewall filter print"))
 #print(mt.get_system())
 system = cs.get_system_structured()
-for sys in system:
-    print(sys)
-
+print(system)
 
 

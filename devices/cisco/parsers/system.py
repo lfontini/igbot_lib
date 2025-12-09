@@ -30,4 +30,9 @@ class SystemParserTextFSM:
             fsm = textfsm.TextFSM(f)
             parsed = fsm.ParseText(raw_system)
             records = [dict(zip(fsm.header, row)) for row in parsed]
-            return records
+            for record in records:
+                system = System(
+                    hostname=record.get("HOSTNAME", ""),
+                    uptime=record.get("UPTIME", ""),
+                )
+            return system
