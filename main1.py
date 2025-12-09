@@ -1,33 +1,30 @@
+
 from devices.factory import DeviceFactory
 from devices.enums.vendor import Vendor
-from devices.enums.mikrotik_driver import MikrotikDriver
+from devices.enums.cisco_driver import CiscoDriver
 from infra.configs.settings import settings   
 
-mt = DeviceFactory.create(
-    vendor=Vendor.MIKROTIK,
-    driver=MikrotikDriver.NETMIKO,
-    ip="172.23.95.10",
-    username=settings.MIKROTIK_USERNAME_CPE,
-    password=settings.MIKROTIK_PASSWORD_CPE,
+
+cs = DeviceFactory.create(
+    vendor=Vendor.CISCO,
+    driver=CiscoDriver.NETMIKO ,
+    ip="172.20.125.13",
+    username=settings.USERNAME_LDAP,
+    password=settings.PASSWORD_LDAP,
 )
 
 
-mt.connect()
+cs.connect()
 #print(mt.run("/ip firewall filter print"))
 #print(mt.get_system())
-ips = mt.get_ips_structured()
-for ip in ips:
-    print(ip.num)
-    print(ip.ip)
-    print(ip.subnet)
-    print(ip.network)
-    print(ip.interface)
-    print(ip.flags)
-    print(ip.comment)
-    print(ip.cidr)
-    print("\n")
+interfaces = cs.get_interfaces_strutured()
+for interface in interfaces:
+     print(interface)
 
-mt.close()
+ips = cs.get_ips_structured()
+for ip in ips:
+    print(ip)
+
 
 
 

@@ -3,17 +3,13 @@ from devices.enums.mikrotik_driver import MikrotikDriver
 from devices.enums.cisco_driver import CiscoDriver
 from devices.enums.juniper_driver import JuniperDriver
 from devices.enums.datacom_driver import DatacomDriver
-
-from devices.mikrotik.netmiko_driver import MikrotikNetmiko
-from devices.mikrotik.paramiko_driver import MikrotikParamiko
-
-
-from devices.cisco.netmiko_driver import CiscoNetmiko
-from devices.cisco.paramiko_driver import CiscoParamiko
-
-from devices.juniper.netmiko_driver import JuniperNetmiko
-
-from devices.datacom.netmiko_driver import DatacomNetmiko
+from devices.mikrotik.drivers.netmiko_driver import MikrotikNetmiko
+from devices.mikrotik.drivers.paramiko_driver import MikrotikParamiko
+from devices.mikrotik.drivers.napalm_driver import MikrotikNapalm
+from devices.cisco.drivers.netmiko_driver import CiscoNetmiko
+from devices.cisco.drivers.paramiko_driver import CiscoParamiko
+from devices.juniper.drivers.netmiko_driver import JuniperNetmiko
+from devices.datacom.drivers.netmiko_driver import DatacomNetmiko
 
 
 
@@ -23,6 +19,7 @@ class DeviceFactory:
         Vendor.MIKROTIK: {
             MikrotikDriver.NETMIKO: MikrotikNetmiko,
             MikrotikDriver.PARAMIKO: MikrotikParamiko,
+            MikrotikDriver.NAPALM: MikrotikNapalm,
         },
         Vendor.CISCO: {
             CiscoDriver.NETMIKO: CiscoNetmiko,

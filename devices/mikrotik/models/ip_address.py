@@ -7,8 +7,6 @@ class IpAddress(BaseModel):
     subnet: int
     network: str
     interface: str
-    flags: List[str] = Field(default_factory=list)
-    comment: Optional[str] = None
 
     @computed_field
     @property

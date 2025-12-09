@@ -4,3 +4,4 @@ class MikrotikDriver(Enum):
     NETMIKO = auto()
     PARAMIKO = auto()
     API = auto()
+    NAPALM = auto()
