@@ -1,0 +1,14 @@
+Value INDEX (\d+)
+Value FLAGS (\S+)
+Value ADDRESS (\S+)
+Value MAC_ADDRESS (\S+)
+Value INTERFACE (\S+)
+
+Start
+  # Linha do cabeçalho da tabela
+  ^\s*#\s+ADDRESS.* -> Records
+
+Records
+  ^\s*(?P<INDEX>\d+)\s+(?P<FLAGS>\S+)\s+(?P<ADDRESS>\S+)\s+(?P<MAC_ADDRESS>\S+)\s+(?P<INTERFACE>\S+)\s*$$ -> Record
+  ^\s*$$
+  ^.* -> Start
