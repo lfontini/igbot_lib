@@ -17,19 +17,9 @@ cs = DeviceFactory.create(
 cs.connect()
 #print(mt.run("/ip firewall filter print"))
 #print(mt.get_system())
-interfaces = cs.get_interfaces_strutured()
-for interface in interfaces:
-     print(interface)
-
-ips = cs.get_ips_structured()
-for ip in ips:
-    print(ip)
-
-
-
-
-
-
+system = cs.get_system_structured()
+for sys in system:
+    print(sys)
 
 
 
