@@ -7,7 +7,7 @@ from infra.configs.settings import settings
 
 cs = DeviceFactory.create(
     vendor=Vendor.CISCO,
-    driver=CiscoDriver.NETMIKO ,
+    driver=CiscoDriver.PARAMIKO ,
     ip="172.20.125.13",
     username=settings.USERNAME_LDAP,
     password=settings.PASSWORD_LDAP,
