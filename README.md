@@ -41,7 +41,7 @@ infra
 
 ```
 
-
+```mermaid
 flowchart LR
 
     %% =======================================
@@ -118,7 +118,7 @@ flowchart LR
     FIREWALL_PARSER --> M_FIREWALL
     LOGS_PARSER --> M_LOGS
     SYSTEM_PARSER --> M_SYSTEM
-
+```
 
 How to use?
 
