@@ -1,8 +1,6 @@
-from pydantic import BaseModel
+from typing import Literal, Optional
 
-
 from pydantic import BaseModel
-from typing import Optional, Literal
 
 
 class CiscoLogEvent(BaseModel):
@@ -15,4 +13,3 @@ class CiscoLogEvent(BaseModel):
     severity: str
     mnemonic: str
     message: list[str]
-

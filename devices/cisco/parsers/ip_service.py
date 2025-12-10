@@ -12,7 +12,7 @@ class IpService:
                     IpAddress(
                         ip=entry["ip_address"][0],
                         interface=entry["interface"],
-                        prefix=entry["prefix_length"][0]
+                        prefix=entry["prefix_length"][0],
                     )
                 )
 

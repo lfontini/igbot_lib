@@ -1,6 +1,9 @@
-from devices.cisco.model.system import System
 from pathlib import Path
+
 import textfsm
+
+from devices.cisco.model.system import System
+
 
 class SystemParser:
     @staticmethod
@@ -17,13 +20,14 @@ class SystemParser:
 
         return systems
 
+
 class SystemParserTextFSM:
     @staticmethod
     def parse(raw_system: str) -> list:
         template_path = (
-            Path(__file__)
-            .resolve()
-            .parent / "templates" / "cisco_ios_show_version.textfsm"
+            Path(__file__).resolve().parent
+            / "templates"
+            / "cisco_ios_show_version.textfsm"
         )
 
         with open(template_path) as f:

@@ -1,7 +1,10 @@
+from paramiko import AutoAddPolicy, SSHClient
+
 from devices.mikrotik.models.arp import Arp
-from paramiko import SSHClient, AutoAddPolicy
-from .base_mikrotik import BaseMikrotik
 from devices.mikrotik.parsers.textfsm_normalizer import parse_arp_mikrotik
+
+from .base_mikrotik import BaseMikrotik
+
 
 class MikrotikParamiko(BaseMikrotik):
     def connect(self):
@@ -30,14 +33,21 @@ class MikrotikParamiko(BaseMikrotik):
         return self._exec("/ip arp print")
 
     def get_arp_structured(self):
-        raw , error = self._exec("/ip arp print")
+        raw, error = self._exec("/ip arp print")
         if error:
             return error
         else:
             arp = parse_arp_mikrotik(raw)
             result = []
             for item in arp:
-                result.append(Arp(num=item["INDEX"], ip=item["ADDRESS"], mac_address=item["MAC_ADDRESS"], interface=item["INTERFACE"]))
+                result.append(
+                    Arp(
+                        num=item["INDEX"],
+                        ip=item["ADDRESS"],
+                        mac_address=item["MAC_ADDRESS"],
+                        interface=item["INTERFACE"],
+                    )
+                )
             return result
 
     def get_mac(self):

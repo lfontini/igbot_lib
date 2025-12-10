@@ -1,37 +1,41 @@
-from devices.cisco.model.system import System
-from devices.cisco.model.logs import CiscoLogEvent
-from devices.cisco.parsers.system import SystemParser
-from devices.cisco.parsers.logs import LogParser
-from devices.cisco.model.firewall import Firewall
-from devices.cisco.parsers.firewall_parser import FirewallParser
-from devices.cisco.parsers.arp_service import ArpService
-from devices.cisco.model.ip_address import IpAddress
-from devices.cisco.model.interfaces import Interface
-from devices.cisco.parsers.ip_service import IpService
-from devices.cisco.parsers.interface_service import InterfaceService
 from netmiko import ConnectHandler
+
+from devices.cisco.model.firewall import Firewall
+from devices.cisco.model.interfaces import Interface
+from devices.cisco.model.ip_address import IpAddress
+from devices.cisco.model.logs import CiscoLogEvent
+from devices.cisco.model.system import System
+from devices.cisco.parsers.arp_service import ArpService
+from devices.cisco.parsers.firewall_parser import FirewallParser
+from devices.cisco.parsers.interface_service import InterfaceService
+from devices.cisco.parsers.ip_service import IpService
+from devices.cisco.parsers.logs import LogParser
+from devices.cisco.parsers.system import SystemParser
+
 from .base_cisco import BaseCisco
+
 
 class CiscoNetmiko(BaseCisco):
     def connect(self):
         self.client = ConnectHandler(
-        device_type="cisco_ios",
-        ip=self.ip,
-        username=self.username,
-        password=self.password,
-        port=self.port,
-        secret=self.password)   
+            device_type="cisco_ios",
+            ip=self.ip,
+            username=self.username,
+            password=self.password,
+            port=self.port,
+            secret=self.password,
+        )
         self.client.enable()
-    
+
     def run(self, command: str, **kwargs) -> str:
         """
-        execute free command 
+        execute free command
         """
         return self.client.send_command(command, **kwargs)
-    
+
     def get_interfaces(self) -> str:
         """
-        get all interfaces as a string 
+        get all interfaces as a string
         """
         return self.run("show interfaces")
 
@@ -68,9 +72,9 @@ class CiscoNetmiko(BaseCisco):
         return FirewallParser.parse(raw)
 
     def get_users(self) -> str:
-        '''
+        """
         return all local users
-        '''
+        """
         return self.run("show users")
 
     def get_logs(self) -> str:
@@ -98,12 +102,12 @@ class CiscoNetmiko(BaseCisco):
         """
         raw = self.run("show version", use_textfsm=True)
         return SystemParser.parse(raw)
-    
+
     def get_config(self) -> str:
         """
         get all config as a string
         """
         return self.run("show running-config")
-    
+
     def close(self) -> None:
         self.client.disconnect()

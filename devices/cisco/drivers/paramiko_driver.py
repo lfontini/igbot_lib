@@ -1,40 +1,42 @@
-from devices.cisco.parsers.system import SystemParserTextFSM
-from devices.cisco.model.ip_address import IpAddress
-from devices.cisco.model.interfaces import Interface
+from paramiko import AutoAddPolicy, SSHClient
+
 from devices.cisco.model.firewall import Firewall
-from devices.cisco.model.system import System
+from devices.cisco.model.interfaces import Interface
+from devices.cisco.model.ip_address import IpAddress
+from devices.cisco.model.ip_arp import IpArp
 from devices.cisco.model.logs import CiscoLogEvent
-from devices.cisco.parsers.system import SystemParser
-from devices.cisco.parsers.logs import LogParser
-from devices.cisco.parsers.firewall_parser import FirewallParser
+from devices.cisco.model.system import System
 from devices.cisco.parsers.arp_service import ArpService
+from devices.cisco.parsers.firewall_parser import FirewallParser
 from devices.cisco.parsers.interface_service import InterfaceService
+from devices.cisco.parsers.logs import LogParser
+from devices.cisco.parsers.system import SystemParser, SystemParserTextFSM
+
 from .base_cisco import BaseCisco
-from paramiko import SSHClient, AutoAddPolicy
+
 
 class CiscoParamiko(BaseCisco):
     """
     Driver for cisco using paramiko
 
     """
+
     def connect(self):
         ssh_client = SSHClient()
         ssh_client.set_missing_host_key_policy(AutoAddPolicy())
         ssh_client.connect(self.ip, self.port, self.username, self.password)
         self.client = ssh_client
 
-
     def run(self, command: str, **kwargs) -> str:
         """
-        execute free command 
+        execute free command
         """
         stdin, stdout, stderr = self.client.exec_command(command, **kwargs)
         return stdout.read().decode("utf-8")
 
-
     def get_interfaces(self) -> str:
         """
-        get all interfaces as a string 
+        get all interfaces as a string
         """
         return self.run("show interfaces")
 
@@ -46,49 +48,19 @@ class CiscoParamiko(BaseCisco):
         raw_interfaces = self.run("show interfaces")
         return InterfaceService.parse(raw_interfaces)
 
-
-    def get_ips(self) -> str:
-        return self.run("show ip interface brief")
-
-    def get_ips_structured(self) -> list[IpAddress]:
+    def get_ips_structured(self) -> list[IpArp]:
         raw_ips = self.run("show ip interface")
         return ArpService.parse(raw_ips)
-
-    def get_arp(self) -> str:
-        return self.run("show ip arp")
-
-    def get_arp_structured(self) -> list[IpAddress]:
-        raw = self.run("show ip arp")
-        return ArpService.parse(raw)
-
-    def get_mac(self) -> str:
-        return self.run("show mac address-table")
-
-    def get_firewall(self) -> str:
-        return self.run("show ip access-lists")
 
     def get_firewall_structured(self) -> list[Firewall]:
         raw = self.run("show ip access-lists")
         return FirewallParser.parse(raw)
 
     def get_users(self) -> str:
-        '''
+        """
         return all local users
-        '''
+        """
         return self.run("show users")
-
-    def get_logs(self) -> str:
-        """
-        get all logs as a string
-        """
-        return self.run("show logging")
-
-    def get_logs_structured(self) -> list[CiscoLogEvent]:
-        """
-        get all logs and return a list of Log objects
-        """
-        raw = self.run("show logging")
-        return LogParser.parse(raw)
 
     def get_system(self) -> str:
         """
@@ -96,38 +68,12 @@ class CiscoParamiko(BaseCisco):
         """
         return self.run("show version")
 
-    def get_system_structured(self) -> list:
-        """
-        get all system information and return a list of System objects
-        """
-        raw = self.run("show version")
-        return SystemParserTextFSM.parse(raw)
-    
-
-    def get_config(self) -> str:
-        """
-        get all config as a string
-        """
-        return self.run("show running-config")
-
-    def get_interfaces(self) -> str:
-        """
-        get all interfaces as a string 
-        """
-        return self.run("show interfaces")
-
     def get_interfaces_strutured(self) -> list[Interface]:
         """
         get all interfaces and return a list of Interface objects
         """
         raw_interfaces = self.run("show interfaces")
         return InterfaceService.parse(raw_interfaces)
-
-    def get_ips(self) -> str:
-        """
-        get all ips as a string
-        """
-        return self.run("show ip interface brief")
 
     def get_ips_structured(self) -> list[IpAddress]:
         """
@@ -142,7 +88,7 @@ class CiscoParamiko(BaseCisco):
         """
         return self.run("show ip arp")
 
-    def get_arp_structured(self) -> list[IpAddress]:
+    def get_arp_structured(self) -> list[IpArp]:
         """
         get all arp and return a list of IpAddress objects
         """
@@ -154,25 +100,6 @@ class CiscoParamiko(BaseCisco):
         get all mac address-table as a string
         """
         return self.run("show mac address-table")
-
-    def get_firewall(self) -> str:
-        """
-        get all firewall as a string
-        """
-        return self.run("show ip access-lists")
-
-    def get_firewall_structured(self) -> list[Firewall]:
-        """
-        get all firewall and return a list of Firewall objects
-        """
-        raw = self.run("show ip access-lists")
-        return FirewallParser.parse(raw)
-
-    def get_users(self) -> str:
-        '''
-        return all local users
-        '''
-        return self.run("show users")
 
     def get_logs(self) -> str:
         """
@@ -187,19 +114,13 @@ class CiscoParamiko(BaseCisco):
         raw = self.run("show logging")
         return LogParser.parse(raw)
 
-    def get_system(self) -> str:
-        """
-        get all system information as a string
-        """
-        return self.run("show version")
-
     def get_system_structured(self) -> list[System]:
         """
         get all system information and return a list of System objects
         """
         raw = self.run("show version")
         return SystemParserTextFSM.parse(raw)
-    
+
     def get_config(self) -> str:
         """
         get all config as a string
@@ -207,4 +128,7 @@ class CiscoParamiko(BaseCisco):
         return self.run("show running-config")
 
     def close(self):
+        """
+        close the connection
+        """
         self.client.close()

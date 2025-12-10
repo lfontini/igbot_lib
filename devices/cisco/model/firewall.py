@@ -2,6 +2,10 @@ from pydantic import BaseModel
 
 
 class Firewall(BaseModel):
+    """
+    Firewall object
+    """
+
     acl_type: str
     acl_name: str
     line_num: str

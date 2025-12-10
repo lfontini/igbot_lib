@@ -3,7 +3,7 @@ from devices.cisco.model.logs import CiscoLogEvent
 
 class LogParser:
     @staticmethod
-    def parse(raw_logs: list) -> list[CiscoLogEvent]:
+    def parse(raw_logs: list[dict]) -> list[CiscoLogEvent]:
         logs = []
 
         for entry in raw_logs:

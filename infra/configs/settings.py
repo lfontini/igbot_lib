@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 BASE_ENV = os.path.join("configs", "base.env")
@@ -20,4 +21,6 @@ class Settings:
         self.USERNAME_LDAP = os.getenv("USERNAME_LDAP", None)
         self.PASSWORD_LDAP = os.getenv("PASSWORD_LDAP", None)
         self.DEFAULT_PORT = os.getenv("DEFAULT_PORT", None)
+
+
 settings = Settings()

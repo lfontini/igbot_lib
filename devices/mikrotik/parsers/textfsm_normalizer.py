@@ -24,6 +24,7 @@ def normalize(record: dict) -> dict:
 def parse_arp_mikrotik(raw: str) -> list[dict]:
     with open("devices/mikrotik/parsers/mikrotik_routeros_ip_arp_print.textfsm") as f:
         import textfsm
+
         fsm = textfsm.TextFSM(f)
         parsed = fsm.ParseText(raw)
         records = [dict(zip(fsm.header, row)) for row in parsed]
