@@ -1,21 +1,43 @@
 from netmiko import ConnectHandler
 
-from devices.cisco.model.firewall import Firewall
-from devices.cisco.model.interfaces import Interface
-from devices.cisco.model.ip_address import IpAddress
-from devices.cisco.model.logs import CiscoLogEvent
-from devices.cisco.model.system import System
-from devices.cisco.parsers.arp_service import ArpService
-from devices.cisco.parsers.firewall_parser import FirewallParser
-from devices.cisco.parsers.interface_service import InterfaceService
-from devices.cisco.parsers.ip_service import IpService
-from devices.cisco.parsers.logs import LogParser
-from devices.cisco.parsers.system import SystemParser
+from devices.cisco.parsers.protocols import (
+    ArpParserProtocol,
+    FirewallParserProtocol,
+    InterfaceParserProtocol,
+    IpParserProtocol,
+    LogsParserProtocol,
+    SystemParserProtocol,
+)
 
 from .base_cisco import BaseCisco
 
 
 class CiscoNetmiko(BaseCisco):
+    def __init__(
+        self,
+        ip: str,
+        username: str,
+        password: str,
+        port: int,
+        interface_parser: InterfaceParserProtocol,
+        ip_parser: IpParserProtocol,
+        arp_parser: ArpParserProtocol,
+        firewall_parser: FirewallParserProtocol,
+        logs_parser: LogsParserProtocol,
+        system_parser: SystemParserProtocol,
+    ):
+        self.ip = ip
+        self.username = username
+        self.password = password
+        self.port = port
+        self.interface_parser = interface_parser
+        self.ip_parser = ip_parser
+        self.arp_parser = arp_parser
+        self.firewall_parser = firewall_parser
+        self.logs_parser = logs_parser
+        self.system_parser = system_parser
+        self.client = None
+
     def connect(self):
         self.client = ConnectHandler(
             device_type="cisco_ios",
@@ -28,86 +50,95 @@ class CiscoNetmiko(BaseCisco):
         self.client.enable()
 
     def run(self, command: str, **kwargs) -> str:
-        """
-        execute free command
-        """
         return self.client.send_command(command, **kwargs)
 
     def get_interfaces(self) -> str:
         """
-        get all interfaces as a string
+        return raw output of show interfaces
         """
         return self.run("show interfaces")
 
-    def get_interfaces_strutured(self) -> list[Interface]:
+    def get_interfaces_strutured(self):
         """
-        get all interfaces and return a list of Interface objects
-
+        return structured output of show interfaces
         """
-        raw_interfaces = self.run("show interfaces", use_textfsm=True)
-        return InterfaceService.parse(raw_interfaces)
+        raw = self.run("show interfaces", use_textfsm=True)
+        return self.interface_parser.parse(raw)
 
     def get_ips(self) -> str:
+        """
+        return raw output of show ip interface brief
+        """
         return self.run("show ip interface brief")
 
-    def get_ips_structured(self) -> list[IpAddress]:
-        raw_ips = self.run("show ip interface", use_textfsm=True)
-        return ArpService.parse(raw_ips)
+    def get_ips_structured(self):
+        """
+        return structured output of show ip interface
+        """
+        raw = self.run("show ip interface", use_textfsm=True)
+        return self.ip_parser.parse(raw)
 
     def get_arp(self) -> str:
+        """
+        return raw output of show ip arp
+        """
         return self.run("show ip arp")
 
-    def get_arp_structured(self) -> list[IpAddress]:
+    def get_arp_structured(self):
+        """
+        return structured output of show ip arp
+        """
         raw = self.run("show ip arp", use_textfsm=True)
-        return ArpService.parse(raw)
-
-    def get_mac(self) -> str:
-        return self.run("show mac address-table")
+        return self.arp_parser.parse(raw)
 
     def get_firewall(self) -> str:
+        """
+        return raw output of show ip access-lists
+        """
         return self.run("show ip access-lists")
 
-    def get_firewall_structured(self) -> list[Firewall]:
+    def get_firewall_structured(self):
+        """
+        return structured output of show ip access-lists
+        """
         raw = self.run("show ip access-lists", use_textfsm=True)
-        return FirewallParser.parse(raw)
-
-    def get_users(self) -> str:
-        """
-        return all local users
-        """
-        return self.run("show users")
+        return self.firewall_parser.parse(raw)
 
     def get_logs(self) -> str:
         """
-        get all logs as a string
+        return raw output of show logging
         """
         return self.run("show logging")
 
-    def get_logs_structured(self) -> list[CiscoLogEvent]:
+    def get_logs_structured(self):
         """
-        get all logs and return a list of Log objects
+        return structured output of show logging
         """
         raw = self.run("show logging", use_textfsm=True)
-        return LogParser.parse(raw)
+        return self.logs_parser.parse(raw)
 
     def get_system(self) -> str:
         """
-        get all system information as a string
+        return raw output of show version
         """
         return self.run("show version")
 
-    def get_system_structured(self) -> list[System]:
+    def get_system_structured(self):
         """
-        get all system information and return a list of System objects
+        return structured output of show version
         """
         raw = self.run("show version", use_textfsm=True)
-        return SystemParser.parse(raw)
+        return self.system_parser.parse(raw)
 
     def get_config(self) -> str:
         """
-        get all config as a string
+        return raw output of show running-config
         """
         return self.run("show running-config")
 
-    def close(self) -> None:
-        self.client.disconnect()
+    def close(self):
+        """
+        close connection
+        """
+        if self.client:
+            self.client.disconnect()
