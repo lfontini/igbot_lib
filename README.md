@@ -19,6 +19,11 @@ devices
         │   ├───ip_address.py            - IP Address model to store the IP addresses as objects
         │   └───user.py                  - User model to store the users as objects
         └───parsers
+            ├───adapters.py              - Adapters to parse the output of the device
+            ├───protocols.py             - Protocols to parse the output of the device
+            ├───templates
+            │   ├───cisco_ios_show_version.textfsm
+            │   └───cisco_ios_show_interfaces.textfsm
             ├───textfsm_normalizer.py    - TextFSM normalizer to normalize the output of the device
             └───arp_parser.py           - ARP parser to parse the ARP table
     └───mikrotik
@@ -79,6 +84,7 @@ flowchart LR
         subgraph MODELS["Modelos (Pydantic)"]
             M_INTERFACE["interfaces.py"]
             M_IP["ip_address.py"]
+            M_IP_ARP["ip_arp.py"]
             M_FIREWALL["firewall.py"]
             M_LOGS["logs.py"]
             M_SYSTEM["system.py"]
@@ -114,7 +120,7 @@ flowchart LR
     %% Services retornam models
     INTERFACE_SERVICE --> M_INTERFACE
     IP_SERVICE --> M_IP
-    ARP_SERVICE --> M_IP
+    ARP_SERVICE --> M_IP_ARP
     FIREWALL_PARSER --> M_FIREWALL
     LOGS_PARSER --> M_LOGS
     SYSTEM_PARSER --> M_SYSTEM

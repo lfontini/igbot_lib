@@ -5,6 +5,7 @@ from typing import Any, List
 from devices.cisco.model.firewall import Firewall
 from devices.cisco.model.interfaces import Interface
 from devices.cisco.model.ip_address import IpAddress
+from devices.cisco.model.ip_arp import IpArp
 from devices.cisco.model.logs import CiscoLogEvent
 from devices.cisco.model.system import System
 from devices.cisco.parsers.arp_service import ArpService
@@ -36,7 +37,7 @@ class IpParserAdapter(IpParserProtocol):
 
 
 class ArpParserAdapter(ArpParserProtocol):
-    def parse(self, raw: Any) -> List[IpAddress]:
+    def parse(self, raw: Any) -> List[IpArp]:
         return ArpService.parse(raw)
 
 
