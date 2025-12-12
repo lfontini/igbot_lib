@@ -1,13 +1,14 @@
+from devices.cisco.model.interfaces import Interface
 from netmiko import ConnectHandler
-
-from devices.cisco.parsers.protocols import (
-    ArpParserProtocol,
-    FirewallParserProtocol,
-    InterfaceParserProtocol,
-    IpParserProtocol,
-    LogsParserProtocol,
-    SystemParserProtocol,
+from devices.cisco.parsers.adapters import (
+    InterfaceParserAdapter,
+    IpParserAdapter,
+    ArpParserAdapter,
+    FirewallParserAdapter,
+    LogsParserAdapter,
+    SystemParserAdapter,
 )
+
 
 from .base_cisco import BaseCisco
 
@@ -18,24 +19,11 @@ class CiscoNetmiko(BaseCisco):
         ip: str,
         username: str,
         password: str,
-        port: int,
-        interface_parser: InterfaceParserProtocol,
-        ip_parser: IpParserProtocol,
-        arp_parser: ArpParserProtocol,
-        firewall_parser: FirewallParserProtocol,
-        logs_parser: LogsParserProtocol,
-        system_parser: SystemParserProtocol,
     ):
         self.ip = ip
         self.username = username
         self.password = password
-        self.port = port
-        self.interface_parser = interface_parser
-        self.ip_parser = ip_parser
-        self.arp_parser = arp_parser
-        self.firewall_parser = firewall_parser
-        self.logs_parser = logs_parser
-        self.system_parser = system_parser
+        self.port = 22
         self.client = None
 
     def connect(self):
@@ -58,12 +46,12 @@ class CiscoNetmiko(BaseCisco):
         """
         return self.run("show interfaces")
 
-    def get_interfaces_strutured(self):
+    def get_interfaces_strutured(self) -> list[Interface]:
         """
         return structured output of show interfaces
         """
         raw = self.run("show interfaces", use_textfsm=True)
-        return self.interface_parser.parse(raw)
+        return InterfaceParserAdapter().parse(raw)
 
     def get_ips(self) -> str:
         """
@@ -76,7 +64,7 @@ class CiscoNetmiko(BaseCisco):
         return structured output of show ip interface
         """
         raw = self.run("show ip interface", use_textfsm=True)
-        return self.ip_parser.parse(raw)
+        return IpParserAdapter().parse(raw)
 
     def get_arp(self) -> str:
         """
@@ -89,7 +77,7 @@ class CiscoNetmiko(BaseCisco):
         return structured output of show ip arp
         """
         raw = self.run("show ip arp", use_textfsm=True)
-        return self.arp_parser.parse(raw)
+        return ArpParserAdapter().parse(raw)
 
     def get_firewall(self) -> str:
         """
@@ -102,7 +90,7 @@ class CiscoNetmiko(BaseCisco):
         return structured output of show ip access-lists
         """
         raw = self.run("show ip access-lists", use_textfsm=True)
-        return self.firewall_parser.parse(raw)
+        return FirewallParserAdapter().parse(raw)
 
     def get_logs(self) -> str:
         """
@@ -115,7 +103,7 @@ class CiscoNetmiko(BaseCisco):
         return structured output of show logging
         """
         raw = self.run("show logging", use_textfsm=True)
-        return self.logs_parser.parse(raw)
+        return LogsParserAdapter().parse(raw)
 
     def get_system(self) -> str:
         """
@@ -128,7 +116,7 @@ class CiscoNetmiko(BaseCisco):
         return structured output of show version
         """
         raw = self.run("show version", use_textfsm=True)
-        return self.system_parser.parse(raw)
+        return SystemParserAdapter().parse(raw)
 
     def get_config(self) -> str:
         """

@@ -1,0 +1,8 @@
+Value VLAN_ID (\d+)
+Value NAME (.+?)
+Value VLAN_TYPE (\S+)
+Value COUNT (\d+)
+
+Start
+  ^-+ -> Start
+  ^${VLAN_ID}\s+${NAME}\s+${VLAN_TYPE}\s+${COUNT}\s*$$ -> Record

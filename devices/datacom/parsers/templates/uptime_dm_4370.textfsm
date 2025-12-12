@@ -1,0 +1,5 @@
+Value UPTIME (\d+\s+days,\s+\d+:\d+)
+
+Start
+  ^Clock:.* -> Start
+  ^Uptime:\s+.*up\s+${UPTIME} -> Record

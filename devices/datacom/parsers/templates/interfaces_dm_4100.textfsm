@@ -1,0 +1,46 @@
+Value INTERFACE (\S+\s+\S+)
+Value PORT_TYPE (.+)
+Value MAC (\S+)
+Value NAME (.*)
+Value ADMIN_STATUS (\S+)
+Value SPEED_DUPLEX (.+)
+Value CAPABILITIES (.+)
+Value FLOW_CONTROL (\S+)
+Value MDIX (\S+)
+Value SLOW_MAC (\S+)
+Value OAM (\S+)
+Value MAC_LEARN (\S+)
+Value LOOPBACK (.+)
+Value LINK_FLAP (.+)
+Value LINK_STATUS (\S+)
+Value OPER_SPEED_DUPLEX (.*)
+Value OPER_FLOW_CONTROL (.*)
+Value OPER_MDIX (.*)
+
+Start
+  ^Information of\s+${INTERFACE} -> BASIC
+
+BASIC
+  ^\s*Port type:\s+${PORT_TYPE}
+  ^\s*MAC address:\s+${MAC}
+  ^\s*Configuration: -> CONFIG
+
+CONFIG
+  ^\s*Name:\s+${NAME}
+  ^\s*Port admin:\s+${ADMIN_STATUS}
+  ^\s*Speed-duplex:\s+${SPEED_DUPLEX}
+  ^\s*Capabilities:\s+${CAPABILITIES}
+  ^\s*Flow-control:\s+${FLOW_CONTROL}
+  ^\s*MDIX:\s+${MDIX}
+  ^\s*Slow Protocols MAC:\s+${SLOW_MAC}
+  ^\s*OAM:\s+${OAM}
+  ^\s*MAC Learn:\s+${MAC_LEARN}
+  ^\s*Loopback Detection:\s+${LOOPBACK}
+  ^\s*Link-Flap Detection:\s+${LINK_FLAP}
+  ^\s*Current status: -> CURRENT
+
+CURRENT
+  ^\s*Link status:\s+${LINK_STATUS}
+  ^\s*Operation speed-duplex:\s+${OPER_SPEED_DUPLEX}
+  ^\s*Flow control:\s+${OPER_FLOW_CONTROL}
+  ^\s*MDIX:\s+${OPER_MDIX} -> Record Start

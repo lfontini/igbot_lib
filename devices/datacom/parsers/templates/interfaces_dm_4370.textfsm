@@ -1,0 +1,33 @@
+Value INTERFACE (\S+(?:-\S+)*\s+\d+\/\d+\/\d+)
+Value ADMIN_STATUS (Enabled|Disabled)
+Value NEGOTIATION (Enabled|Disabled)
+Value ADVERTISING (.*?)
+Value SPEED (\d+[MG]?|)
+Value DUPLEX (full|half|)
+Value FLOW_CONTROL (Enabled|Disabled|)
+Value MDIX (\S+)
+Value MTU (\d+)
+Value DESCRIPTION (.*)
+Value LINK_STATUS (Up|Down)
+Value OPER_SPEED_DUPLEX (\S+|)
+
+Start
+  ^\s*interface\s+${INTERFACE} -> CONFIG
+
+CONFIG
+  ^\s*Port admin\s*:\s+${ADMIN_STATUS}
+  ^\s*Negotiation\s*:\s+${NEGOTIATION}
+  ^\s*Advertising Abilities\s*:\s+\[\s*${ADVERTISING}\s*\]
+  ^\s*Speed\s*:\s+${SPEED}
+  ^\s*Duplex\s*:\s+${DUPLEX}
+  ^\s*MDIX\s*:\s+${MDIX}
+  ^\s*MTU\s*:\s+${MTU}
+  ^\s*Description\s*:\s*${DESCRIPTION}
+  ^\s*Status: -> STATUS
+
+STATUS
+  ^\s*Link Status\s*:\s+${LINK_STATUS}
+  ^\s*Speed/Duplex\s*:\s+${OPER_SPEED_DUPLEX}
+  ^\s*Flow Control\s*:\s+${FLOW_CONTROL}
+  ^\s*MDIX\s*:\s+${MDIX}
+  ^$$ -> Record Start

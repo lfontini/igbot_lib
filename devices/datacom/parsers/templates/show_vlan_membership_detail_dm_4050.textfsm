@@ -1,0 +1,9 @@
+Value VLAN_ID (\d+)
+Value IFACE (\S+)
+Value VLAN_TYPE (\S+)
+Value STATUS (\S+)
+Value PORT_STATE (\S+)
+
+Start
+  ^-+ -> Start
+  ^${VLAN_ID}\s+${IFACE}\s+${VLAN_TYPE}\s+${STATUS}\s+${PORT_STATE} -> Record

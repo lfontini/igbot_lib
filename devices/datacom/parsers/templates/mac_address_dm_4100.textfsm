@@ -1,0 +1,13 @@
+Value UNIT (\d+)
+Value BLOCK (\S+)
+Value INTERFACE (Eth\s+\d+\/\s*\d+)
+Value MAC ([0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2})
+Value VLAN (\d+)
+Value TYPE (\S+)
+
+Start
+  ^\s*Unit\s+Block\s+Interface\s+MAC\s+Address -> Records
+
+Records
+  ^\s*${UNIT}\s+${BLOCK}\s+${INTERFACE}\s+${MAC}\s+${VLAN}\s+\S+\s+${TYPE} -> Record
+  ^Total MAC Addresses -> Start
